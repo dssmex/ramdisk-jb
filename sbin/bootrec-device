@@ -1,0 +1,58 @@
+#!/sbin/sh
+
+# fixing CPU clocks to avoid issues in recovery
+echo 1024000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo 122000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+
+echo 0 > /sys/class/android_usb/android0/enable
+echo 0FCE > /sys/class/android_usb/android0/idVendor
+echo 615D > /sys/class/android_usb/android0/idProduct
+echo mass_storage,adb > /sys/class/android_usb/android0/functions
+echo 1 > /sys/class/android_usb/android0/enable
+stop adbd
+
+# trigger green LED
+echo '0' > /sys/class/leds/blue/brightness
+echo '0' > /sys/class/leds/red/brightness
+echo '255' > /sys/class/leds/green/brightness
+# trigger button-backlight
+echo '255' > /sys/class/leds/button-backlight/brightness
+sleep 1
+
+# trigger white LED
+echo '255' > /sys/class/leds/blue/brightness
+echo '255' > /sys/class/leds/red/brightness
+echo '255' > /sys/class/leds/green/brightness
+# trigger button-backlight
+echo '255' > /sys/class/leds/button-backlight/brightness
+sleep 1
+
+# trigger red LED
+echo '0' > /sys/class/leds/blue/brightness
+echo '255' > /sys/class/leds/red/brightness
+echo '0' > /sys/class/leds/green/brightness
+# trigger button-backlight
+echo '255' > /sys/class/leds/button-backlight/brightness
+
+# trigger vibrator
+echo '200' > /sys/class/timed_output/vibrator/enable
+
+# L&R key
+cat /dev/input/event4 > /dev/keycheck4&
+
+# Vol Key
+cat /dev/input/event1 > /dev/keycheck1&
+
+# POWER key
+cat /dev/input/event0 > /dev/keycheck0&
+
+
+sleep 3
+# trigger LED off
+echo '0' > /sys/class/leds/blue/brightness
+echo '0' > /sys/class/leds/red/brightness
+echo '0' > /sys/class/leds/green/brightness
+# trigger button-backlight
+echo '0' > /sys/class/leds/button-backlight/brightness
+
+kill -9 $!
