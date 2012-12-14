@@ -67,6 +67,11 @@ on boot
     #load bcm4329 module
     #insmod /modules/bcm4329.ko
 
+    #load modules
+    insmod /modules/ntfs.ko
+    insmod /modules/cifs.ko
+    insmod /modules/fuse.ko
+
     #install bcm4329 module if needed
     exec /sbin/sh /res/autowifi.sh
 
